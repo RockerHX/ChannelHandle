@@ -38,7 +38,31 @@ struct Channel: Codable {
 
 
 struct Channels: Codable {
-    var channels: [Channel]
+    var channels: [Channel] {
+        didSet {
+            var stores = [StoreChannel]()
+            channels.forEach { (channel) in
+                stores.append(StoreChannel(wit: channel))
+            }
+            storeChannels = stores
+        }
+    }
+    var storeChannels: [StoreChannel]?
+}
+
+
+struct StoreChannel: Codable {
+    let id: String
+    let name: String
+    let state: String
+    var type: String
+
+    init(wit channel: Channel) {
+        self.id = "\(channel.id)"
+        self.name = channel.name
+        self.state = channel.state.rawValue
+        self.type = channel.type!
+    }
 }
 
 
